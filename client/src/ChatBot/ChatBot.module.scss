@@ -1,0 +1,101 @@
+@import '../styles/default.scss';
+
+.bot {
+  > div {
+    width: 200px;
+    height: 100px;
+    margin: 3em auto;
+    background: rgba(255,255,255,.1);
+  }
+}
+
+.conversation {
+  list-style: none;
+
+  li {
+    display: flex;
+    justify-content: flex-start;
+    animation: appearLeft 1s ease alternate;
+    
+    &.incoming {
+      justify-content: flex-end;
+      animation: appearRight 1s ease alternate;
+    }
+
+    .message {
+      display: inline-block;
+      margin-left: 0;
+      background: #110811;
+      margin-bottom: 12px;
+      padding: 1em;
+      border-radius: 10px;
+      background: #110811;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      box-shadow: 1px 1px 15px rgba(0,0,0,.2);
+      width: auto;
+      max-width: 65%;
+      text-align: left;
+
+      h5 {
+        margin-bottom: 5px;
+        font-weight: bolder;
+        opacity: .5;
+      }
+  
+      p {
+        opacity: .8;
+      }
+    }
+  } 
+}
+
+.bottomBar {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, -50%);
+
+  nav {
+    color: $default-color;
+
+    ul {
+      list-style: none;
+
+      li {
+        display: inline-block;
+
+        button {
+          cursor: pointer;
+          background: rgba(255,255,255,.8);
+          border-radius: 100px;
+          padding: 1em 4em;
+          margin: 0 5px;
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+@keyframes appearLeft {
+  0% {
+    opacity: 0;
+    margin-left: -20px;
+  }
+  100% {
+    opacity: 1;
+    margin-left: 0;
+  }
+}
+
+@keyframes appearRight {
+  0% {
+    opacity: 0;
+    margin-right: -20px;
+  }
+  100% {
+    opacity: 1;
+    margin-left: 0;
+  }
+}
