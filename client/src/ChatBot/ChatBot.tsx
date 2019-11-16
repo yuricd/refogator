@@ -15,30 +15,24 @@ interface IConversation {
 }
 
 const ChatBot: React.FC = () => {
-  const [conversation, setConversation] = useState<IConversation[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState<IVertex>({ _id: '', question: '', options: [] });
-  const [finished, setFinished] = useState<boolean>(false);
+
+  const {
+    conversation,
+    currentQuestion,
+    finished,
+    handleOption,
+    loadConversation,
+  } = useChatBot();
 
   useEffect(() => {
-    socket.on('QUESTION', (data: string) => {
-      const question: IVertex = JSON.parse(data);
-      setConversation(conversation.concat({ from: 'Bot', content: question.question }));
-      setCurrentQuestion(question);
-      console.log(question);
-    });
-    
-    socket.on('FINISH', (data: string) => {
-      const parsed = JSON.parse(data);
-      if (parsed.finished) {
-        setFinished(true);
-      }
-    });
-  }, [conversation]);
+    console.log('useeffect');
+    loadConversation();
+  }, [loadConversation]);
 
   const MessageItem = (props: { message: IConversation }) => {
     const { message } = props;
     const incoming = message.from !== 'Bot';
-
+    
     return (
       <li className={incoming ? styles.incoming : ''}>
         <div className={styles.message}>
@@ -92,11 +86,40 @@ const ChatBot: React.FC = () => {
       )}
     </div>
   );
+};
+
+const useChatBot = () => {
+  const [conversation, setConversation] = useState<IConversation[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<IVertex>({ _id: '', question: '', options: [] });
+  const [finished, setFinished] = useState<boolean>(false);
 
   function handleOption(opt: IOption) {
     setConversation(conversation.concat({ from: 'Yuri', content: opt.text }));
     socket.emit('ANSWER', opt);
   }
-};
+
+  function loadConversation() {
+    socket.on('QUESTION', (data: string) => {
+      const question: IVertex = JSON.parse(data);
+      setConversation(conversation.concat({ from: 'Bot', content: question.question }));
+      setCurrentQuestion(question);
+    });
+    
+    socket.on('FINISH', (data: string) => {
+      const parsed = JSON.parse(data);
+      if (parsed.finished) {
+        setFinished(true);
+      }
+    });
+  }
+
+  return {
+    conversation,
+    currentQuestion,
+    finished,
+    handleOption,
+    loadConversation,
+  }
+}
 
 export default ChatBot;
