@@ -2,6 +2,8 @@
 
 $default-color: #110811;
 
+$font-family: 'Source Sans Pro', sans-serif;
+
 * {
   margin: 0;
   padding: 0;
@@ -16,14 +18,20 @@ $default-color: #110811;
 }
 
 body {
-  background-color: #0a040a;
-  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #151515;
+  font-family: $font-family;
   color: #FFF;
   line-height: 150%;
+  font-size: 1.1rem;
+}
+
+button {
+  font-family: $font-family;
+  font-size: 1.1rem;
 }
 
 .app {
-  width: 60%;
+  width: 50%;
   margin: 0 auto;
   max-width: 1300px;
 }

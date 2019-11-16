@@ -1,61 +1,102 @@
-import * as React from "react";
-import styles from "./ChatBot.module.scss";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import socketIOClient from 'socket.io-client';
+import styles from './ChatBot.module.scss';
+import { IVertex, IOption } from '../Types';
+// import brasilnu from '../brasilnu.svg';
+// @ts-ignore
+import Typewriter from 'typewriter-effect';
+
+const socket = socketIOClient('http://localhost:3000');
+
+interface IConversation {
+  from: string;
+  content: string;
+}
 
 const ChatBot: React.FC = () => {
+  const [conversation, setConversation] = useState<IConversation[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<IVertex>({ _id: '', question: '', options: [] });
+  const [finished, setFinished] = useState<boolean>(false);
+
+  useEffect(() => {
+    socket.on('QUESTION', (data: string) => {
+      const question: IVertex = JSON.parse(data);
+      setConversation(conversation.concat({ from: 'Bot', content: question.question }));
+      setCurrentQuestion(question);
+      console.log(question);
+    });
+    
+    socket.on('FINISH', (data: string) => {
+      const parsed = JSON.parse(data);
+      if (parsed.finished) {
+        setFinished(true);
+      }
+    });
+  }, [conversation]);
+
+  const MessageItem = (props: { message: IConversation }) => {
+    const { message } = props;
+    const incoming = message.from !== 'Bot';
+
+    return (
+      <li className={incoming ? styles.incoming : ''}>
+        <div className={styles.message}>
+          <h5>{message.from}</h5>
+          {!incoming ? (
+            <Typewriter
+              options={{
+                strings: message.content,
+                autoStart: true,
+                loop: false,
+                delay: 30,
+                cursor: '',
+              }}
+            />
+          ) : (
+            <p>{message.content}</p>
+          )}
+        </div>
+      </li>
+    )
+  }
+
   return (
     <div className={styles.chatbot}>
       <div className={styles.bot}>
-        <div />
+        {/* <img src={brasilnu} alt="Brasil Nu - LiberBot" /> */}
       </div>
 
       <section className={styles.messages}>
         <ol className={styles.conversation}>
-          <li>
-            <div className={styles.message}>
-              <h5>From</h5>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                nec sapien commodo, faucibus turpis eget, imperdiet nibh. Aenean
-                ut semper nulla, vel vehicula quam. Morbi gravida mollis
-                pharetra. In diam tellus, euismod quis blandit at, dictum vitae
-                erat. Aenean imperdiet sodales molestie. Duis venenatis
-                consectetur diam, at suscipit lectus. Integer ante nunc,
-                venenatis id ipsum sed, vestibulum rutrum nisl. Maecenas quis
-                neque sed nulla tempor blandit at ut urna. Nam vitae hendrerit
-                ipsum. Vestibulum placerat ligula quis dignissim efficitur.
-                Nullam libero mauris, volutpat in dolor id, tempor elementum
-                nulla. Etiam viverra porta tellus eu aliquam. Pellentesque nibh
-                ante, euismod porttitor elit blandit, elementum consequat justo.
-                Maecenas commodo lobortis enim et ultricies. Morbi lacinia, sem
-                id rutrum sagittis, lacus nisl bibendum lacus, nec gravida dui
-                felis ut massa.
-              </p>
-            </div>
-          </li>
-
-          <li className={styles.incoming}>
-            <div className={styles.message}>
-              <h5>Yuri</h5>
-              <p>Lorem ipsum dolor sit amet, consecte</p>
-            </div>
-          </li>
+          {conversation.map((message, idx) => 
+            <MessageItem key={idx} message={message} />  
+          )}
         </ol>
       </section>
-
-      <section className={styles.bottomBar}>
-        <nav>
-          <ul>
-            <li>
-              <button>Opção 1</button>
-            </li>
-            <li>
-              <button>Opção 2</button>
-            </li>
-          </ul>
-        </nav>
-      </section>
+      
+      {!finished && currentQuestion.options ? (
+        <section className={styles.bottomBar}>
+          <nav>
+            <ul>
+              {currentQuestion.options.map((opt, idx) => 
+                <li key={idx}>
+                  <button onClick={() => handleOption(opt)}>{opt.text}</button>
+                </li>
+              )}
+            </ul>
+          </nav>
+        </section>
+      ) : (
+        <p>Terminado</p>
+      )}
     </div>
   );
+
+  function handleOption(opt: IOption) {
+    setConversation(conversation.concat({ from: 'Yuri', content: opt.text }));
+    socket.emit('ANSWER', opt);
+  }
 };
 
 export default ChatBot;

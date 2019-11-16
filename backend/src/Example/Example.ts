@@ -1,14 +1,14 @@
 import DIGraph from '../Bot/Graph';
 import { IOption, IGraph } from '../Bot/Types';
 
-function main() {
+function Example() {
 
   const digraph = DIGraph();
 
-  const b1 = digraph.createVertex('Bloco 1');
-  const b2 = digraph.createVertex('Bloco 2');
-  const b3 = digraph.createVertex('Bloco 3');
-  const b4 = digraph.createVertex('Bloco 4');
+  const b1 = digraph.createVertex('Essa é a primeira pergunta ');
+  const b2 = digraph.createVertex('Uma nova pergunta aqui');
+  const b3 = digraph.createVertex('Aqui é uma outra pergunta');
+  const b4 = digraph.createVertex('Esta daqui é a próxima pergunta');
 
   const b1ops: IOption[] = [
     digraph.createRelation('Aponta para 2', b2._id),
@@ -27,7 +27,7 @@ function main() {
     ],
   };
 
-  console.log(digraph.adjacencyList(newGraph));
+  return newGraph;
 }
 
-main();
+export default Example;

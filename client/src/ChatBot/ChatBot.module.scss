@@ -1,6 +1,10 @@
 @import '../styles/default.scss';
 
 .bot {
+  display: flex;
+  justify-content: center;
+  margin: 2em 0;
+
   > div {
     width: 200px;
     height: 100px;
@@ -11,15 +15,16 @@
 
 .conversation {
   list-style: none;
+  padding-bottom: 7em;
 
   li {
     display: flex;
     justify-content: flex-start;
-    animation: appearLeft 1s ease alternate;
+    // animation: appearLeft 1s ease alternate;
     
     &.incoming {
       justify-content: flex-end;
-      animation: appearRight 1s ease alternate;
+      // animation: appearRight 1s ease alternate;
     }
 
     .message {
@@ -29,7 +34,7 @@
       margin-bottom: 12px;
       padding: 1em;
       border-radius: 10px;
-      background: #110811;
+      background: #0E0E0E;
       word-wrap: break-word;
       white-space: pre-wrap;
       box-shadow: 1px 1px 15px rgba(0,0,0,.2);
@@ -51,7 +56,7 @@
 }
 
 .bottomBar {
-  position: absolute;
+  position: fixed;
   left: 50%;
   bottom: 0;
   transform: translate(-50%, -50%);
@@ -67,11 +72,19 @@
 
         button {
           cursor: pointer;
-          background: rgba(255,255,255,.8);
           border-radius: 100px;
           padding: 1em 4em;
           margin: 0 5px;
           font-size: 1.1rem;
+          color: rgba(255,255,255,.8);
+          border: 1px solid rgba(255,255,255,.8);
+          background: rgba(255,255,255,0);
+          transition: all ease-out .2s; 
+
+          &:hover {
+            background: rgba(255,255,255,.8);
+            color: $default-color;
+          }
         }
       }
     }
