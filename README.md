@@ -1,4 +1,4 @@
-# LiberBot
+# Refogator
 
 A chatbot based on a DI graph and socket to interate with user. 
 
